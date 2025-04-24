@@ -27,6 +27,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -49,20 +51,22 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --frozen
       - name: Run tests
-        run: uv run pytest tests --cov=src
+        run: |
+          mkdir -p test-results
+          uv run pytest tests --cov=src --junitxml=test-results/junit.xml
       - name: Minimize cache
         run: uv cache prune --ci
-      - uses: actions/upload-artifact@v4
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results/junit.xml
+          check_name: Test Results
+          comment_mode: always
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-results
           path: test-results/
-      - if: failure()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              body: '🚨 CI build failed! Please check the logs.'
-            })
+          retention-days: 30
