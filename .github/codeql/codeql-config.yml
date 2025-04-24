@@ -1,0 +1,19 @@
+name: "Python Security Configuration"
+
+disable-default-queries: false
+
+queries:
+  - uses: security-and-quality
+  - name: custom-queries
+    uses: ./.github/codeql/custom-queries
+
+paths-ignore:
+  - "**/tests/**"
+  - "**/docs/**"
+  - "**/.github/**"
+  - "**/node_modules/**"
+  - "**/venv/**"
+  - "**/__pycache__/**"
+
+paths:
+  - "**/*.py"

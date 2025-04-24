@@ -1,0 +1,61 @@
+ci:
+  skip: [pytest]
+
+default_language_version:
+  python: python3.12
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      # Ruff linting
+      - id: ruff
+        name: ruff
+        entry: uv run ruff check .
+        language: python
+        types: [python]
+
+      # Ruff formatting
+      - id: ruff-format
+        name: ruff-format
+        entry: uv run ruff format .
+        language: python
+        types: [python]
+
+      # Mypy type checking
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types: [python]
+
+      # Docformatter
+      - id: docformatter
+        name: docformatter
+        entry: uv run docformatter -r -i --pre-summary-newline --make-summary-multi-line --wrap-summaries 90 --wrap-descriptions 90 src tests
+        language: python
+        types: [python]
+        additional_dependencies: [docformatter]
+
+      # Bandit security checks
+      - id: bandit
+        name: bandit
+        entry: uv run bandit -r src
+        language: system
+        types: [python]
+        exclude: ^tests/
+
+      # Pytest
+      - id: pytest
+        name: pytest
+        entry: uv run pytest tests --cov=src
+        language: python
+        types: [python]
+        pass_filenames: false
