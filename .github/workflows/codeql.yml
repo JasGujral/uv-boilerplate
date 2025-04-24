@@ -2,9 +2,14 @@ name: "CodeQL Security Analysis"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * 0" # Weekly scan
 
@@ -51,7 +56,7 @@ jobs:
 
       - name: Notify on failure
         if: failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v6
         with:
           script: |
             github.rest.issues.createComment({
