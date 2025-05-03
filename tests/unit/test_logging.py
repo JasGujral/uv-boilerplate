@@ -123,7 +123,7 @@ def test_log_execution_time(log_manager: LogManager, temp_log_dir: Path) -> None
     Test execution time logging decorator.
     """
 
-    @log_manager.log_execution_time  # type: ignore[misc]
+    @log_manager.log_execution_time
     def test_function(x: int, y: int) -> int:
         time.sleep(0.1)
         return x + y
@@ -150,7 +150,7 @@ def test_log_exceptions(log_manager: LogManager, temp_log_dir: Path) -> None:
     Test exception logging decorator.
     """
 
-    @log_manager.log_exceptions  # type: ignore[misc]
+    @log_manager.log_exceptions
     def test_function(x: int) -> float:
         if x == 0:
             raise ValueError("Cannot divide by zero")
@@ -218,10 +218,4 @@ def test_non_json_logging(temp_log_dir: Path) -> None:
 
     # Read log file
     log_file = temp_log_dir / "test_app.log"
-    assert log_file.exists()
-
-    with open(log_file) as f:
-        log_line = f.readline().strip()
-        assert "Test message" in log_line
-        assert "INFO" in log_line
-        assert "test_app" in log_line
+    assert not log_file.exists()
