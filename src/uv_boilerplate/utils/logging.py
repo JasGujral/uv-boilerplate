@@ -50,6 +50,7 @@ class LogManager:
         log_dir: str = "logs",
         max_bytes: int = 10485760,  # 10MB
         backup_count: int = 5,
+        terminal_output: bool = True,
         json_output: bool = True,
     ) -> None:
         """
@@ -69,7 +70,7 @@ class LogManager:
         self.max_bytes = max_bytes
         self.backup_count = backup_count
         self.json_output = json_output
-
+        self.terminal_output = terminal_output
         # Create log directory if it doesn't exist
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
@@ -88,29 +89,29 @@ class LogManager:
         logger.handlers = []
 
         # Create formatters
-        formatter = None
-        if self.json_output:
-            formatter = CustomJsonFormatter(
-                "%(timestamp)s %(level)s %(name)s %(message)s %(extra)s"
-            )
-        else:
-            formatter = CustomJsonFormatter(
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-            )
-
-        # Console handler
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-
-        # File handler
-        file_handler = RotatingFileHandler(
-            self.log_dir / f"{self.app_name}.log",
-            maxBytes=self.max_bytes,
-            backupCount=self.backup_count,
+        # Create formatters
+        json_formatter = CustomJsonFormatter(
+            "%(timestamp)s %(level)s %(name)s %(message)s %(extra)s"
         )
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
+        terminal_formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+
+        # File handler with JSON formatting if enabled
+        if self.json_output:
+            file_handler = RotatingFileHandler(
+                self.log_dir / f"{self.app_name}.log",
+                maxBytes=self.max_bytes,
+                backupCount=self.backup_count,
+            )
+            file_handler.setFormatter(json_formatter)
+            logger.addHandler(file_handler)
+
+        # Console handler with regular formatting if enabled
+        if self.terminal_output:
+            console_handler = logging.StreamHandler(sys.stdout)
+            console_handler.setFormatter(terminal_formatter)
+            logger.addHandler(console_handler)
 
     def get_logger(self) -> logging.Logger:
         """
