@@ -12,7 +12,8 @@ custom_log_manager = LogManager(
     app_name="example_app",
     log_level="DEBUG",
     log_dir="example_logs",
-    json_output=True,
+    json_output=False,
+    terminal_output=True,
 )
 
 # Example 1: Basic logging
