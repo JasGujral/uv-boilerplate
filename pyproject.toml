@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [
   { name = "Jasmeet Gujral", email = "gujralsam@gmail.com" },
+  { name = "Johannes Henner", email = "jaroslav.henner@gmail.com" },
 ]
 
 homepage = "https://github.com/JasGujral/uv-boilerplate#readme"

@@ -29,7 +29,7 @@ jobs:
       packages: write
       checks: write
       pull-requests: write
-    runs-on: ubuntu-24.04
+    runs-on: ghcr.io/astral-sh/uv:${{ env.UV_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - name: Read Python version from pyproject.toml
@@ -39,8 +39,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ steps.python-version.outputs.version }}
-      - name: Set up uv
-        run: curl -LsSf https://astral.sh/uv/${{ env.UV_VERSION }}/install.sh | sh
       - uses: actions/cache@v4
         with:
           path: /tmp/.uv-cache
